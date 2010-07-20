@@ -1,0 +1,15 @@
+
+Kwwika.Common/bin/
+*.user
+*.vspscc
+Kwwika.Library.Common/bin
+*.SCC
+Kwwika.QueueComponents/bin
+Kwwika.QueueComponents/obj/
+Kwwika.UpdateService/bin
+Kwwika.UpdateService/obj
+Kwwika.Library.Common/obj
+Kwwika.UpdateServiceConsole/bin
+Kwwika.UpdateServiceConsole/obj
+Kwwika.Common/obj
+Kwwika.Components.suo
