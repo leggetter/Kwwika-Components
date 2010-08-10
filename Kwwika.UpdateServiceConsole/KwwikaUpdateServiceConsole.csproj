@@ -52,6 +52,7 @@
       <HintPath>..\libs\NLog2.netfx40-2010.06.12.001\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />

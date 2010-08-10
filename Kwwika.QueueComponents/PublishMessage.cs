@@ -12,9 +12,24 @@ namespace Kwwika.QueueComponents
     public class PublishMessage
     {
         private Dictionary<string, string> _values = new Dictionary<string, string>();
+        private string _topicName;
         
         [XmlElement(ElementName="TopicName")]
-        public string TopicName { get; set; }
+        public string TopicName
+        {
+            get
+            {
+                return _topicName;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    throw new ArgumentException("TopicName cannot be null or empty");
+                }
+                _topicName = value;
+            }
+        }
 
         [XmlIgnore]
         public Dictionary<string, string> Values { get { return _values; } set { _values = value; } }
@@ -31,6 +46,10 @@ namespace Kwwika.QueueComponents
 
         public PublishMessage(string topicName)
         {
+            if (string.IsNullOrEmpty(topicName))
+            {
+                throw new ArgumentException("topicName cannot be null or empty");
+            }
             this.TopicName = topicName;
         }
     }

@@ -93,8 +93,8 @@ namespace Kwwika.QueueComponents
 
                     if (_status == ConnectionStatus.LoggedIn || _status == ConnectionStatus.Reconnected)
                     {
-
                         _logger.Trace("beginning message processing");
+
                         ProcessMessage(msg);
 
                         _logger.Trace("finished message processing");
