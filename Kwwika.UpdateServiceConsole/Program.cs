@@ -5,6 +5,7 @@ using System.Text;
 using Kwwika.Common.Logging;
 using Kwwika.QueueComponents;
 using Kwwika.Common.Logging.NLog;
+using Kwwika.Library.QueueComponents;
 
 namespace KwwikaUpdateServiceConsole
 {
@@ -17,6 +18,7 @@ namespace KwwikaUpdateServiceConsole
             Console.WriteLine("\"START\" to start the service\n" +
                 "\"STOP\" to stop the service.\n" +
                 "\"SEND\" to send a message. You should then enter a message in the format \"<TOPIC> fieldName1=fieldValue1,fieldName2=FieldValue2,...,fieldNameX=fieldValueX\".\n" +
+                //"\"READ\" read the next message from the queue.\n" +
                 "\"QUIT\" to stop the service and quit the application.");
 
             string action = "";
@@ -65,7 +67,7 @@ namespace KwwikaUpdateServiceConsole
         public KwwikaServiceConsole()
         {
             _logging = new LoggingService("KwwikaService");
-            _writer = new MessageQueueWriter(Config.PublishQueue, _logging);
+            _writer = new MessageQueueWriter(Config.PublishQueue, typeof(PublishMessage), _logging);
         }
 
         public void Start()
@@ -74,7 +76,11 @@ namespace KwwikaUpdateServiceConsole
             {
                 _started = true;
                 Console.WriteLine("starting...");
-                _reader = new MessageQueueReader(Config.KwwikaApiKey, Config.KwwikaDomain, Config.PublishQueue, _logging);
+                _reader =
+                    new MessageQueueReader(Config.PublishQueue,
+                        new MessageConsumer(Config.KwwikaApiKey, Config.KwwikaDomain, Config.PublishQueue, _logging),
+                        typeof(PublishMessage),
+                        _logging);
                 _reader.Start();
             }
             else

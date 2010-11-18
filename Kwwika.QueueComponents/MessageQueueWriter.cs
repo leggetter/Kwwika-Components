@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Messaging;
 using Kwwika.Common.Logging;
-using Kwwika;
 
 namespace Kwwika.QueueComponents
 {
@@ -15,18 +10,22 @@ namespace Kwwika.QueueComponents
         ILoggingService _logging;
         MessageQueue _writeQueue;
 
-        string _kwwikaServiceQueueName;
+        string _queueName;
 
-        public MessageQueueWriter(string kwwikaServiceQueueName, ILoggingService logging)
+        public MessageQueueWriter(string queueName, Type messageType, ILoggingService logging)
         {
-            _kwwikaServiceQueueName = kwwikaServiceQueueName;
+            _queueName = queueName;
             _logging = logging;
             _writeQueue = GetQueue();
-            _processor = new MessageQueueWriteProcessor(_writeQueue, _logging, typeof(PublishMessage));
+            _processor = new MessageQueueWriteProcessor(_writeQueue, messageType, _logging);
         }
 
         public void Write(object message)
         {
+            if (message == null)
+            {
+                throw new ArgumentNullException("message");
+            }
             _processor.Write(message);
         }
 
@@ -35,15 +34,15 @@ namespace Kwwika.QueueComponents
             _logging.Info("Getting message queue");
 
             MessageQueue queue = null;
-            if (MessageQueue.Exists(_kwwikaServiceQueueName))
+            if (MessageQueue.Exists(_queueName))
             {
                 _logging.Info("MessageQueue already exists. Reusing the existing queue.");
-                queue = new MessageQueue(_kwwikaServiceQueueName);
+                queue = new MessageQueue(_queueName);
             }
             else
             {
                 _logging.Info("MessageQueue does not exists. Creating new queue.");
-                queue = MessageQueue.Create(_kwwikaServiceQueueName, true);
+                queue = MessageQueue.Create(_queueName, true);
             }
             return queue;
         }

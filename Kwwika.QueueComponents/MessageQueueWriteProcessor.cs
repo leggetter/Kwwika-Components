@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Messaging;
 using Kwwika.Common.Logging;
 
@@ -14,7 +11,7 @@ namespace Kwwika.QueueComponents
         private System.Messaging.MessageQueue _writeQueue;
         private Common.Logging.ILoggingService _logger;
 
-        public MessageQueueWriteProcessor(MessageQueue _writeQueue, ILoggingService _logging, Type messageType)
+        public MessageQueueWriteProcessor(MessageQueue _writeQueue, Type messageType, ILoggingService _logging)
         {
             this._writeQueue = _writeQueue;
             this._writeQueue.Formatter = new XmlMessageFormatter(new Type[] { messageType });

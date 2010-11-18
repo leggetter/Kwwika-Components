@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Threading;
 using System.Messaging;
+using System.Threading;
 using Kwwika.Common.Logging;
 
 namespace Kwwika.QueueComponents
 {
-    public class MessageQueueReadProcessor: ICommandListener, IConnectionListener
+    public class MessageQueueReadProcessor
     {
         const int ALLOWED_FAILURE_RATE = 20;
+        IMessageConsumer _consumer;
         private MessageQueue _readQueue;
-        private IConnection _conn;
         private ILoggingService _logger;
 
-        ConnectionStatus _status = ConnectionStatus.Disconnected;
-        
         private int _failureCount = 0;
         bool _fatalFailure = false;
 
         Thread _queueReader;
         bool _reading = false;
+        private Type _messageType;
         
-        public MessageQueueReadProcessor(MessageQueue readQueue, IConnection conn, Type messageType, ILoggingService logger)
+        public MessageQueueReadProcessor(MessageQueue readQueue, IMessageConsumer consumer, Type messageType, ILoggingService logger)
         {
+            _messageType = messageType;
             _readQueue = readQueue;
-            _readQueue.Formatter = new XmlMessageFormatter(new Type[] { typeof(PublishMessage) });
+            _readQueue.Formatter = new XmlMessageFormatter(new Type[] { messageType });
 
-            this._conn = conn;
-            this._conn.AddConnectionListener(this);
-            this._conn.Logger = new KwwikaLoggerWrapper(logger);
+            this._consumer = consumer;
             _logger = logger;           
         }
 
@@ -91,12 +89,11 @@ namespace Kwwika.QueueComponents
                     msg = _readQueue.Receive(myTransaction);
                     _logger.Info("message received");
 
-                    if (_status == ConnectionStatus.LoggedIn || _status == ConnectionStatus.Reconnected)
+
+                    _logger.Trace("beginning message processing");
+
+                    if (ProcessMessage(msg))
                     {
-                        _logger.Trace("beginning message processing");
-
-                        ProcessMessage(msg);
-
                         _logger.Trace("finished message processing");
                         myTransaction.Commit();
 
@@ -107,7 +104,8 @@ namespace Kwwika.QueueComponents
                     }
                     else
                     {
-                        _logger.Warn("Kwwika connection is not established. Aborting message handling and sleeping");
+                        ++_failureCount;
+                        _logger.Warn("Message not published. Aborting message handling and sleeping");
                         myTransaction.Abort();
                         Thread.Sleep(5000);
                     }
@@ -171,34 +169,10 @@ namespace Kwwika.QueueComponents
             }
         }
 
-        private void ProcessMessage(Message msg)
+        private bool ProcessMessage(Message msg)
         {
-            PublishMessage publish = (PublishMessage)msg.Body;
-            _conn.Publish(publish.TopicName, publish.Values, this);            
+            return _consumer.ProcessMessage(msg.Body);            
         }
-
-        #region ICommandListener Members
-
-        public void CommandError(string topic, CommandErrorType code)
-        {
-            _logger.Error(string.Format("Error publishing to {0}. Reason: {1}", topic, code));
-        }
-
-        public void CommandSuccess(string topic)
-        {
-            _logger.Trace(string.Format("Successfully publishing to {0}.", topic));
-        }
-
-        #endregion
-
-        #region IConnectionListener Members
-
-        public void ConnectionStatusUpdated(ConnectionStatus status)
-        {
-            _status = status;
-        }
-
-        #endregion
     }
 }
 

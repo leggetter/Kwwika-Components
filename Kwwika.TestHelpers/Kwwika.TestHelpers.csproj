@@ -5,21 +5,13 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4FD02D27-81FB-4710-992B-A17BBB33579E}</ProjectGuid>
+    <ProjectGuid>{CA157973-30F3-496C-8660-21F364F0CF6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kwwika.QueueComponents.Common</RootNamespace>
-    <AssemblyName>Kwwika.Library.Common</AssemblyName>
+    <RootNamespace>Kwwika.TestHelpers</RootNamespace>
+    <AssemblyName>Kwwika.TestHelpers</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -40,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Kwwika">
-      <HintPath>..\libs\Kwwika\v0.2.201007151856\net2.0\Kwwika.dll</HintPath>
+      <HintPath>..\..\KwwikaRESTAPI\libs\Kwwika\v0.2.201007151856\net2.0\Kwwika.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,14 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KwwikaLoggerWrapper.cs" />
+    <Compile Include="ConnectionListenerHelper.cs" />
+    <Compile Include="LoggerHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kwwika.Common\Kwwika.Common.csproj">
-      <Project>{78112F25-A0EE-4A68-B9D2-4F6F11B6F629}</Project>
-      <Name>Kwwika.Common</Name>
-    </ProjectReference>
+    <Compile Include="SubscriptionListenerHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Kwwika.Common")]
+[assembly: AssemblyTitle("Kwwika.Library.QueueComponents")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Kwwika.Common")]
+[assembly: AssemblyProduct("Kwwika.Library.QueueComponents")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("84eae4ae-9f6a-4ff8-a1a8-d0b5f2da891f")]
+[assembly: Guid("46d15e92-8eab-4eda-8c59-b502078f4f26")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using System.Collections;
 
-namespace Kwwika.QueueComponents
+namespace Kwwika.Library.QueueComponents
 {
     [Serializable]
     public class PublishMessage
