@@ -11,45 +11,53 @@ namespace KwwikaUpdateServiceConsole
 {
     class Program
     {
+        private static ILoggingService _loggingService = new LoggingService("KwwikaService");
         static void Main(string[] args)
         {
-            KwwikaServiceConsole console = new KwwikaServiceConsole();
+            try
+            {
+                KwwikaServiceConsole console = new KwwikaServiceConsole(_loggingService);
 
-            Console.WriteLine("\"START\" to start the service\n" +
-                "\"STOP\" to stop the service.\n" +
-                "\"SEND\" to send a message. You should then enter a message in the format \"<TOPIC> fieldName1=fieldValue1,fieldName2=FieldValue2,...,fieldNameX=fieldValueX\".\n" +
-                //"\"READ\" read the next message from the queue.\n" +
-                "\"QUIT\" to stop the service and quit the application.");
+                Console.WriteLine("\"START\" to start the service\n" +
+                    "\"STOP\" to stop the service.\n" +
+                    "\"SEND\" to send a message. You should then enter a message in the format \"<TOPIC> fieldName1=fieldValue1,fieldName2=FieldValue2,...,fieldNameX=fieldValueX\".\n" +
+                    //"\"READ\" read the next message from the queue.\n" +
+                    "\"QUIT\" to stop the service and quit the application.");
 
-            string action = "";
-            while (action != "QUIT")
-            {                
-                action = Console.ReadLine().ToUpper();
-                switch (action)
+                string action = "";
+                while (action != "QUIT")
                 {
-                    case "START":
-                        console.Start();
-                        break;
-                    case "SEND":
-                        Console.WriteLine("Enter your message to send");
-                        string message = Console.ReadLine();
-                        try
-                        {
-                            console.Send(message);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Error parsing message!" + ex.ToString());
-                        }
-                        break;
-                    case "STOP":
-                    case "QUIT":
-                        console.Stop();
-                        break;
-                    default:
-                        Console.WriteLine(action + " is an unknown command!");
-                        break;
+                    action = Console.ReadLine().ToUpper();
+                    switch (action)
+                    {
+                        case "START":
+                            console.Start();
+                            break;
+                        case "SEND":
+                            Console.WriteLine("Enter your message to send");
+                            string message = Console.ReadLine();
+                            try
+                            {
+                                console.Send(message);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("Error parsing message!" + ex.ToString());
+                            }
+                            break;
+                        case "STOP":
+                        case "QUIT":
+                            console.Stop();
+                            break;
+                        default:
+                            Console.WriteLine(action + " is an unknown command!");
+                            break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _loggingService.Error("Unexpected exception in Main: " + ex);
             }
 
             Environment.Exit(0);
@@ -64,28 +72,35 @@ namespace KwwikaUpdateServiceConsole
 
         bool _started = false;
 
-        public KwwikaServiceConsole()
+        public KwwikaServiceConsole(ILoggingService loggingService)
         {
-            _logging = new LoggingService("KwwikaService");
+            _logging = loggingService;
             _writer = new MessageQueueWriter(Config.PublishQueue, typeof(PublishMessage), _logging);
         }
 
         public void Start()
         {
-            if (!_started)
+            try
             {
-                _started = true;
-                Console.WriteLine("starting...");
-                _reader =
-                    new MessageQueueReader(Config.PublishQueue,
-                        new MessageConsumer(Config.KwwikaApiKey, Config.KwwikaDomain, Config.PublishQueue, _logging),
-                        typeof(PublishMessage),
-                        _logging);
-                _reader.Start();
+                if (!_started)
+                {
+                    _started = true;
+                    Console.WriteLine("starting...");
+                    _reader =
+                        new MessageQueueReader(Config.PublishQueue,
+                            new MessageConsumer(Config.KwwikaApiKey, Config.KwwikaDomain, Config.PublishQueue, _logging),
+                            typeof(PublishMessage),
+                            _logging);
+                    _reader.Start();
+                }
+                else
+                {
+                    Console.WriteLine("not in a stopped state!");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("not in a stopped state!");
+                _logging.Error("Unexpected exception in Start: " + ex);
             }
         }
 
